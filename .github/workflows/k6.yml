@@ -21,7 +21,7 @@ jobs:
           sudo apt-get install k6
 
       - name: Run Smoke tests
-        run: for file in tests/smoke/*.js; do k6 cloud $file; done
+        run: for file in tests/smoke/*.js; do k6 cloud run $file; done
 
       - name: Run API tests
         run: for file in tests/api/*.js; do k6 cloud $file; done
