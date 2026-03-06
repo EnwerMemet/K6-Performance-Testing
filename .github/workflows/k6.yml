@@ -1,0 +1,30 @@
+name: k6 Tests
+
+on:
+  push:
+    branches: [ simpleStart ]
+
+jobs:
+  k6-tests:
+    runs-on: ubuntu-latest
+    env:
+      K6_CLOUD_TOKEN: ${{ secrets.K6_CLOUD_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install k6
+        run: |
+          curl -s https://dl.k6.io/key.gpg | sudo apt-key add -
+          echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install k6
+
+      - name: Run Smoke tests
+        run: for file in tests/smoke/*.js; do k6 cloud run $file; done
+
+      - name: Run API tests
+        run: for file in tests/api/*.js; do k6 cloud $file; done
+
+      - name: Run Load tests
+        run: for file in tests/load/*.js; do k6 cloud $file; done
